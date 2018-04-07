@@ -1,13 +1,11 @@
 precision mediump float;
 
-// our texture
 uniform sampler2D u_image;
 uniform float max_velocity;
+uniform float delta;
 
-// the texCoords passed in from the vertex shader.
 varying vec2 v_texCoord;
 
-float delta = 0.00001;
 
 void main() {
     vec4 lookup = texture2D(u_image, v_texCoord);

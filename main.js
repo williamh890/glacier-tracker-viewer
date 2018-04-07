@@ -12,13 +12,6 @@ function main() {
         return;
     }
 
-    //const fbo = setupFrameBuffer(gl);
-
-    //gl.bindFramebuffer(gl.FRAMEBUFFER, rttFramebuffer);
-    //drawSceneOnLaptopScreen();
-
-    //gl.bindFramebuffer(gl.FRAMEBUFFER, null);
-
     let [vert, frag] = ["", ""];
     let [vDone, fDone] = [false, false];
 
@@ -49,7 +42,7 @@ function make(image, vert, frag) {
 
     var positionAttributeLocation = gl.getAttribLocation(program, "a_position");
     var maxVelocityLocation = gl.getUniformLocation(program, "max_velocity");
-    var deltaLocation = gl.getUniformLocation(program, "max_velocity");
+    var deltaLocation = gl.getUniformLocation(program, "delta");
 
     gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
 
@@ -84,14 +77,14 @@ function make(image, vert, frag) {
 
     maxVelSlider.addEventListener("mouseup", e => {
         console.log(maxVelSlider.value);
-        gl.uniform1f(maxVelocityLocation, slider.value);
+        gl.uniform1f(maxVelocityLocation, maxVelSlider.value);
 
         gl.drawArrays(primitiveType, offset, count);
     });
 
     deltaSlider.addEventListener("mouseup", e => {
         console.log(deltaSlider.value);
-        gl.uniform1f(deltaLocation, slider.value);
+        gl.uniform1f(deltaLocation, deltaSlider.value);
 
         gl.drawArrays(primitiveType, offset, count);
     });
@@ -157,35 +150,5 @@ function createProgram(gl, vertexShader, fragmentShader) {
 
     console.log(gl.getProgramInfoLog(program));
     gl.deleteProgram(program);
-}
-
-function setupFrameBuffer() {
-    const fbo = gl.createFramebuffer();
-
-    gl.bindFramebuffer(gl.FRAMEBUFFER, fbo);
-    fbo.width = 512;
-    fbo.height = 512;
-
-    const texture = gl.createTexture();
-    gl.bindTexture(gl.TEXTURE_2D, texture);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_NEAREST);
-    gl.generateMipmap(gl.TEXTURE_2D);
-
-    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, fbo.width, fbo.height, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
-    gl.bindFramebuffer(gl.FRAMEBUFFER, fbo);
-
-    var renderbuffer = gl.createRenderbuffer();
-    gl.bindRenderbuffer(gl.RENDERBUFFER, renderbuffer);
-    gl.renderbufferStorage(gl.RENDERBUFFER, gl.DEPTH_COMPONENT16, fbo.width, fbo.height);
-
-    gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, rttTexture, 0);
-    gl.framebufferRenderbuffer(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.RENDERBUFFER, renderbuffer);
-
-    gl.bindTexture(gl.TEXTURE_2D, null);
-    gl.bindRenderbuffer(gl.RENDERBUFFER, null);
-    gl.bindFramebuffer(gl.FRAMEBUFFER, null);
-
-    return fbo;
 }
 
